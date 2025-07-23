@@ -11,6 +11,7 @@ from api.models import db, TokenBlocklist
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_cors import CORS
 
 
 # from models import Person
@@ -20,6 +21,8 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+CORS(app, supports_credentials=True)
 
 # JWT Configuration
 # Primero se configura el JWT_SECRET_KEY para generar los tokens, tomando el valor de las variables de entorno

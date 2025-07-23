@@ -2,13 +2,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const publicFetch = async (endpoint, method = "GET", body = null) => {
   //Inicializar los parámetros de la petición con el método
-  let params = {
-    method,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-  };
-  // Si hay un body se agrega al parámetro y se agrega la cabecera
+  let params = { method, headers: { "Access-Control-Allow-Origin": "*" } };
   if (body) {
     params.body = JSON.stringify(body);
     params.headers["Content-Type"] = "application/json";
@@ -22,8 +16,6 @@ export const publicFetch = async (endpoint, method = "GET", body = null) => {
     }
     if (response.status >= 400) {
       console.error(response.status, response.statusText);
-
-      //return await response.json()
     }
     return await response.json();
   } catch (error) {
