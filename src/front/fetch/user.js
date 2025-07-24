@@ -15,11 +15,21 @@ export const logout = async () => {};
 export const register = async () => {};
 
 export const getInfo = async (dispatch) => {
-  let response = await privateFetch("/userinfo");
-  if (response.msg) {
-    console.error(response.msg);
+  const response = await privateFetch("/userinfo");
+
+  if (!response || typeof response !== "object") {
+    console.error(
+      "❌ No se obtuvo una respuesta válida de /userinfo:",
+      response
+    );
     return null;
   }
+
+  if ("msg" in response) {
+    console.warn("⚠️ Mensaje de error del backend:", response.msg);
+    return null;
+  }
+
   dispatch({ type: "SET_USER_INFO", payload: response });
   return response;
 };

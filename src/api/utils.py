@@ -1,4 +1,8 @@
 from flask import jsonify, url_for
+from functools import wraps
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from .models import User
+
 
 class APIException(Exception):
     status_code = 400
@@ -15,10 +19,27 @@ class APIException(Exception):
         rv['message'] = self.message
         return rv
 
+
 def has_no_empty_params(rule):
     defaults = rule.defaults if rule.defaults is not None else ()
     arguments = rule.arguments if rule.arguments is not None else ()
     return len(defaults) >= len(arguments)
+
+
+def admin_required(fn):
+    @wraps(fn)
+    @jwt_required()
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+
+        if not user or not user.is_admin:
+            return jsonify({"msg": "Acceso restringido a administradores"}), 403
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
 
 def generate_sitemap(app):
     links = ['/admin/']
@@ -30,7 +51,9 @@ def generate_sitemap(app):
             if "/admin/" not in url:
                 links.append(url)
 
-    links_html = "".join(["<li><a href='" + y + "'>" + y + "</a></li>" for y in links])
+    links_html = "".join(["<li><a href='" + y + "'>" +
+                         y + "</a></li>" for y in links])
+
     return """
         <div style="text-align: center;">
         <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
