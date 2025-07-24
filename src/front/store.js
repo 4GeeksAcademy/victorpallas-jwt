@@ -51,7 +51,10 @@ export default function storeReducer(store, action = {}) {
     case "SET_USER_INFO":
       return {
         ...store,
-        userInfo: action.payload,
+        userInfo: {
+          ...store.userInfo,
+          user: action.payload, // 👈 asegura que haya userInfo.user
+        },
       };
 
     // ✅ NUEVO: agregar favorito

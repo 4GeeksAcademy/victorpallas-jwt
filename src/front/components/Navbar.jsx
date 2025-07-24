@@ -4,7 +4,10 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const Navbar = () => {
 	const { store } = useGlobalReducer();
-	const userName = store?.userInfo?.user?.name || store?.userInfo?.user?.email || null;
+	const user = store?.userInfo?.user;
+	const userName = user?.fullname || user?.email;
+
+	const is_admin = user?.is_admin === true;
 
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light px-3">
@@ -30,6 +33,13 @@ export const Navbar = () => {
 					<Link to="/favorites" className="btn btn-outline-warning btn-sm">
 						⭐ Mis favoritos
 					</Link>
+
+					{/* ✅ Botón de admin SOLO si isAdmin === true */}
+					{is_admin && (
+						<Link to="/admin" className="btn btn-outline-danger btn-sm">
+							👑 Admin
+						</Link>
+					)}
 
 					{/* Saludo al usuario logueado */}
 					{userName && (

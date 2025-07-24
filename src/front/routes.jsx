@@ -11,7 +11,7 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import { Login } from "./pages/Login";
 import { Details } from "./pages/Details";
-import Favorites from "./pages/FavoritesPage";
+import { FavoritesPage } from "./pages/FavoritesPage";
 import { AdminPanel } from "./pages/AdminPanel"; // ✅ nuevo componente
 import { PeopleList } from "./pages/PeopleList";
 import { PlanetList } from "./pages/PlanetList";

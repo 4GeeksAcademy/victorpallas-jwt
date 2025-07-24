@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
+    __tablename__ = 'user'
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
@@ -14,15 +15,19 @@ class User(db.Model):
     is_active: Mapped[bool] = mapped_column(
         Boolean(), nullable=True, default=True)
     is_admin: Mapped[bool] = mapped_column(
-        Boolean(), nullable=True, default=False) 
+        Boolean(), nullable=True, default=False)
+
+    favorites = db.relationship("Favorite", backref="user", lazy=True)
+    misfavoritos = db.relationship(
+        "Misfavoritos", backref="usuario", lazy=True)
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
             "fullname": self.fullname,
-            "isActive": self.is_active,
-            "isAdmin": self.is_admin  # 👈 También lo exponemos si es necesario
+            "is_active": self.is_active,
+            "is_admin": self.is_admin
         }
 
 
@@ -33,17 +38,10 @@ class TokenBlocklist(db.Model):
 
 class Favorite(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    # Relación con el usuario
     user_id: Mapped[int] = mapped_column(
         db.ForeignKey("user.id"), nullable=False)
-
-    # Identificadores del recurso de SWAPI
-    uid: Mapped[str] = mapped_column(
-        String(50), nullable=False)  # ej. "1", "14"
-    name: Mapped[str] = mapped_column(
-        String(120), nullable=False)  # ej. "Luke Skywalker"
-    # ej. "people", "planets", "vehicles"
+    uid: Mapped[str] = mapped_column(String(50), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
     type: Mapped[str] = mapped_column(String(50), nullable=False)
 
     def serialize(self):
@@ -56,5 +54,37 @@ class Favorite(db.Model):
         }
 
 
-# Relación en User
-User.favorites = db.relationship("Favorite", backref="user", lazy=True)
+class Personas(db.Model):
+    __tablename__ = 'personas'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+    def serialize(self):
+        return {"id": self.id, "name": self.name}
+
+
+class Planeta(db.Model):
+    __tablename__ = 'planeta'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+    def serialize(self):
+        return {"id": self.id, "name": self.name}
+
+
+class Misfavoritos(db.Model):
+    __tablename__ = 'misfavoritos'
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    personas_id = db.Column(
+        db.Integer, db.ForeignKey('personas.id'), nullable=True)
+    planeta_id = db.Column(
+        db.Integer, db.ForeignKey('planeta.id'), nullable=True)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "usuario_id": self.usuario_id,
+            "personas_id": self.personas_id,
+            "planeta_id": self.planeta_id
+        }

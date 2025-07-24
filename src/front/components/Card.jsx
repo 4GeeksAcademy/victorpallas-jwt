@@ -6,10 +6,12 @@ import { addFavorite, deleteFavorite } from "../fetch/favorites.js";
 const Card = ({ item, type }) => {
     const { store, dispatch } = useGlobalReducer();
 
+    // Identificar si el item está en favoritos
     const isFavorite = store.favorites.some(
         (fav) => fav.uid === item.uid && fav.type === type
     );
 
+    // Alternar estado de favorito
     const toggleFavorite = () => {
         if (isFavorite) {
             deleteFavorite(dispatch, item.uid, type);
@@ -35,16 +37,17 @@ const Card = ({ item, type }) => {
             />
             <div className="card-body">
                 <h5 className="card-title">{item.name}</h5>
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between align-items-center">
                     <Link
                         to={`/details/${type}/${item.uid}`}
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary btn-sm"
                     >
                         Más info
                     </Link>
                     <button
                         onClick={toggleFavorite}
-                        className={`btn ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
+                        className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
+                        title={isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"}
                     >
                         {isFavorite ? "💛" : "🤍"}
                     </button>

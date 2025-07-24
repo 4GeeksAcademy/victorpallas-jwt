@@ -19,7 +19,6 @@ const Main = () => {
         <React.StrictMode>
             {/* Provide global state to all components */}
             <StoreProvider>
-                <Initializer />
                 {/* Set up routing for the application */}
                 <RouterProvider router={router}>
                 </RouterProvider>
